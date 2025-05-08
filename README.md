@@ -18,7 +18,7 @@
 - Protection against SQL, JS, and HTML injections (2)
 - Password and sensitive data protection (4)
 
----
+
 
 ## Report (15 marks)
 
