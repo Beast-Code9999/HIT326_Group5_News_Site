@@ -1,5 +1,3 @@
-# HIT326_Group5_News_Site
-
 # Project Marking Criteria
 
 ## Code (35 marks)
