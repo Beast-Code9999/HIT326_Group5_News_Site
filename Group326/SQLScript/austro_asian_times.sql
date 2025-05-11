@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 11, 2025 at 08:01 AM
+-- Generation Time: May 11, 2025 at 08:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -113,19 +113,6 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rss_feeds`
---
-
-CREATE TABLE `rss_feeds` (
-  `id` int(11) NOT NULL,
-  `article_id` int(11) DEFAULT NULL,
-  `feed_type` enum('RSS','ATOM') DEFAULT 'RSS',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tags`
 --
 
@@ -200,13 +187,6 @@ ALTER TABLE `roles`
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `rss_feeds`
---
-ALTER TABLE `rss_feeds`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `article_id` (`article_id`);
-
---
 -- Indexes for table `tags`
 --
 ALTER TABLE `tags`
@@ -251,12 +231,6 @@ ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `rss_feeds`
---
-ALTER TABLE `rss_feeds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
@@ -298,12 +272,6 @@ ALTER TABLE `comments`
 ALTER TABLE `moderation`
   ADD CONSTRAINT `moderation_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`),
   ADD CONSTRAINT `moderation_ibfk_2` FOREIGN KEY (`editor_id`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `rss_feeds`
---
-ALTER TABLE `rss_feeds`
-  ADD CONSTRAINT `rss_feeds_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`);
 
 --
 -- Constraints for table `users`
