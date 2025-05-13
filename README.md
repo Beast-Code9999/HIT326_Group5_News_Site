@@ -1,3 +1,7 @@
+## Figma
+https://www.figma.com/proto/hoVxKzTvo7sfmcUboQ3lun/HIT326-News-Site-App?node-id=3-3&t=USFPonOrFC3UOvIA-1
+
+
 # Project Marking Criteria
 
 ## Code (35 marks)
