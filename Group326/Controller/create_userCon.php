@@ -1,4 +1,5 @@
 <?php
+require_once '../../CSS/header.php'; // Adjust path based on file structure
 require_once '../Database/db_connection.php';
 session_start();
 
@@ -39,3 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Invalid request.";
 }
 ?>
+<?php require_once '../../CSS/footer.php'; ?>

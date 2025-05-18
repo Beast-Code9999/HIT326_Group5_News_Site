@@ -1,6 +1,7 @@
 <?php
+require_once '../../CSS/header.php'; // Adjust path based on file structure
 require_once '../../Database/db_connection.php';
-session_start();
+
 
 // Check if user is logged in and is an admin
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 10) {
@@ -33,3 +34,4 @@ $adminName = htmlspecialchars($_SESSION['user']['username']);
     </div>
 </body>
 </html>
+<?php require_once '../../CSS/footer.php'; ?>

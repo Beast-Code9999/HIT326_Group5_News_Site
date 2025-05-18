@@ -1,4 +1,5 @@
 <?php
+require_once '../../CSS/header.php'; // Adjust path based on file structure
 require '../Controller/authenticate.php';
 require '../Database/db_connection.php';
 
@@ -22,3 +23,4 @@ $articles = $stmt->fetchAll();
 <a href="logout.php">Logout</a>
 </body>
 </html>
+<?php require_once '../../CSS/footer.php'; ?>

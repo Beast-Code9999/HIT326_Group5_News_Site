@@ -1,6 +1,7 @@
 <?php
+require_once '../../CSS/header.php'; // Adjust path based on file structure
 require_once '../../Database/db_connection.php';
-session_start();
+
 ?>
 
 <h2>Create New User</h2>
@@ -25,4 +26,4 @@ session_start();
     <input type="submit" value="Create User">
 </form>
 
-<?php ?>
+<?php require_once '../../CSS/footer.php'; ?>
