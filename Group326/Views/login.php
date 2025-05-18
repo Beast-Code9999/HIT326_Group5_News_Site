@@ -1,5 +1,7 @@
 <?php
 require '../Database/db_connection.php';
+
+
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -10,12 +12,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
-    // Compare plain text password directly
     if ($user && $password === $user['password']) {
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
         $_SESSION['role_id'] = $user['role_id'];
-        header('Location: ../Views/homescreen.php');
-        exit;
+
+        // Redirect based on role
+        if ($user && $password === $user['password']) {
+            $_SESSION['user'] = $user;
+
+            if ($user['role_id'] == 10) {
+                header('Location: ../Views/Admin/admin_home.php');
+            } else {
+                header('Location: ../Views/homescreen.php');
+            }
+            exit;
+}
     } else {
         $error = "Invalid login credentials.";
     }
