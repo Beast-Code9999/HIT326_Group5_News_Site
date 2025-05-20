@@ -1,6 +1,6 @@
 <?php
-require_once '../CSS/header.php'; // Adjust path based on file structure
-require '../Database/db_connection.php';
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
+require '../../Database/db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user'] = $user;
 
             if ($user['role_id'] == 10) {
-                header('Location: ../Views/Admin/admin_home.php');
+                header('Location: ../Admin/admin_home.php');
             } else {
-                header('Location: ../Views/homescreen.php');
+                header('Location: ../User/homescreen.php');
             }
             exit;
 }
@@ -44,4 +44,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 </body>
 </html>
-<?php require_once '../CSS/footer.php'; ?>
+<?php require_once '../HeaderFooter/footer.php'; ?>
+

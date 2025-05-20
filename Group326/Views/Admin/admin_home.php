@@ -1,5 +1,5 @@
 <?php
-require_once '../../CSS/header.php'; // Adjust path based on file structure
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
 require_once '../../Database/db_connection.php';
 
 
@@ -34,4 +34,5 @@ $adminName = htmlspecialchars($_SESSION['user']['username']);
     </div>
 </body>
 </html>
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../HeaderFooter/footer.php'; ?>
+

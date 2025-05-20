@@ -1,12 +1,13 @@
 <?php
 session_start();
-require '../Database/db_connection.php'; // Assumes $pdo is defined in this file
+require_once __DIR__ . '/../Database/db_connection.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT id, username, password_hash, role_id FROM users WHERE username = ?");
+    $stmt = $pdo->prepare("SELECT id, username, password, role_id FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -16,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['username'] = $user['username'];
         $_SESSION['role_id'] = $user['role_id'];
 
-        header("Location: ../Views/homescreen.php");
+        header("Location: ../Views/User/homescreen.php");
         exit;
     } else {
         echo "Invalid username or password.";

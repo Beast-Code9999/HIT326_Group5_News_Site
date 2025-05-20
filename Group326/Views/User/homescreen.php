@@ -1,9 +1,9 @@
 <?php
-require '../Controller/authenticate.php';
-require '../Database/db_connection.php';
-require_once '../CSS/header.php'; // Adjust path based on file structure
+require '../../Controller/authenticate.php';
+require '../../Database/db_connection.php';
+require_once '../HeaderFooter/header.php';
 
-// Check if the user is logged in and has author/editor access
+// Check if the user has author/editor privileges
 $canPost = false;
 if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [1, 2])) {
     $canPost = true;
@@ -12,32 +12,35 @@ if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [1, 2])) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canPost) {
     $title = $_POST['title'];
     $content = $_POST['content'];
-    $keywords = $_POST['keywords'];
     $user_id = $_SESSION['user']['id'];
     $allow_comments = isset($_POST['allow_comments']) ? 1 : 0;
 
-    // Image upload handling
-    $imagePath = null;
+    // Handle image upload (store as BLOB in DB)
+    $imageData = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $imageTmp = $_FILES['image']['tmp_name'];
-        $imageName = basename($_FILES['image']['name']);
-        $targetDir = "../CSS/Images/";
-        $targetFile = $targetDir . time() . "_" . $imageName;
-        if (move_uploaded_file($imageTmp, $targetFile)) {
-            $imagePath = $targetFile;
-        }
+        $imageData = file_get_contents($imageTmp);
     }
 
     // Insert article into DB
-    $stmt = $pdo->prepare("INSERT INTO articles (title, content, keywords, author_id, allow_comments, image_path, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
-    $stmt->execute([$title, $content, $keywords, $user_id, $allow_comments, $imagePath]);
+    $stmt = $pdo->prepare("
+        INSERT INTO articles 
+        (title, content, author_id, allow_comments, image_data, created_at, is_published)
+        VALUES (?, ?, ?, ?, ?, NOW(), 0)
+    ");
+    $stmt->bindParam(1, $title);
+    $stmt->bindParam(2, $content);
+    $stmt->bindParam(3, $user_id);
+    $stmt->bindParam(4, $allow_comments);
+    $stmt->bindParam(5, $imageData, PDO::PARAM_LOB);
+    $stmt->execute();
 
     $message = "Article submitted successfully! Awaiting editor approval.";
 }
 
 // Fetch 5 most recent articles with author info
 $stmt = $pdo->query("
-    SELECT a.title, a.content, a.image_path, a.created_at, u.username 
+    SELECT a.title, a.content, a.image_data, a.created_at, u.username 
     FROM articles a
     JOIN users u ON a.author_id = u.id
     ORDER BY a.created_at DESC
@@ -67,9 +70,11 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="article-preview">
         <h3><?= htmlspecialchars($article['title']) ?></h3>
         <p><strong>By:</strong> <?= htmlspecialchars($article['username']) ?> | <small><?= $article['created_at'] ?></small></p>
-        <?php if (!empty($article['image_path'])): ?>
-            <img src="<?= htmlspecialchars($article['image_path']) ?>" alt="Article Image">
+        
+        <?php if (!empty($article['image_data'])): ?>
+            <img src="data:image/jpeg;base64,<?= base64_encode($article['image_data']) ?>" alt="Article Image">
         <?php endif; ?>
+        
         <p><?= htmlspecialchars(substr($article['content'], 0, 200)) ?>...</p>
     </div>
 <?php endforeach; ?>
@@ -86,14 +91,11 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <label>Content:</label>
         <textarea name="content" rows="6" required></textarea>
 
-        <label>Keywords:</label>
-        <input type="text" name="keywords">
-
         <label>Allow Comments:</label>
         <input type="checkbox" name="allow_comments"><br><br>
 
         <label>Upload Image:</label>
-        <input type="file" name="image"><br><br>
+        <input type="file" name="image" accept="image/*"><br><br>
 
         <input type="submit" value="Submit Article">
     </form>
@@ -105,3 +107,5 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
+
+<?php require_once '../HeaderFooter/footer.php'; ?>

@@ -1,5 +1,5 @@
 <?php
-require_once '../../CSS/header.php'; // Adjust path based on file structure
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
 require_once '../Database/db_connection.php';
 session_start();
 
@@ -12,7 +12,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 10) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $password = trim($_POST['password_hash']);
     $role_id = (int) $_POST['role_id'];
 
     // Basic validation
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Insert new user
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash, role_id) VALUES (?, ?, ?, ?)");
         $stmt->execute([$username, $email, $password, $role_id]);
 
         echo "User created successfully. <a href='../Views/Admin/user_list.php'>Back to user list</a>";
@@ -40,4 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Invalid request.";
 }
 ?>
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../CSS/footer.php'; ?>

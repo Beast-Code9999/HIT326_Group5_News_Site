@@ -1,7 +1,7 @@
 <?php
-require '../Controller/authenticate.php';
-require '../Database/db_connection.php';
-require_once '../CSS/header.php'; // Adjust path based on file structure
+require '../../Controller/authenticate.php';
+require '../../Database/db_connection.php';
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
 
 // Check if the user is logged in and has author/editor access
 $canPost = false;
@@ -105,3 +105,4 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
+<?php require_once '../HeaderFooter/footer.php'; ?>

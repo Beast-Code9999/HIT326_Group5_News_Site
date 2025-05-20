@@ -1,5 +1,5 @@
 <?php
-require_once '../../CSS/header.php';
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
 require_once '../../Database/db_connection.php';
 
 // Check if user is admin
@@ -96,4 +96,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <br>
 <a href="user_list.php">← Back to User List</a>
 
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../HeaderFooter/footer.php'; ?>
+

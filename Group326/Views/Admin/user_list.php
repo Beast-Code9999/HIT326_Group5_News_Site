@@ -1,5 +1,5 @@
 <?php
-require_once '../../CSS/header.php'; // Adjust path based on file structure
+require_once '../HeaderFooter/header.php'; // Adjust path based on file structure
 require_once '../../Database/db_connection.php';
 
 
@@ -69,4 +69,5 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </table>
 </body>
 </html>
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../HeaderFooter/footer.php'; ?>
+
