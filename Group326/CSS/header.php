@@ -19,10 +19,18 @@ if (session_status() === PHP_SESSION_NONE) {
          <?php if ($_SESSION['user']['role_id'] == 10): ?>
             <a href="/HIT326_Group5_News_Site/Group326/Views/Admin/admin_home.php">Admin Home</a> |
         <?php endif; ?>
+        
+        <?php
+        // Check if user is logged in and has role_id 1 or 2, or allow access for everyone (including non-logged-in users)
+        if (!isset($_SESSION['user']['role_id']) || in_array($_SESSION['user']['role_id'], [1, 2])): ?>
+            <a href="/HIT326_Group5_News_Site/Group326/Views/homescreen.php">Home</a> |
+        <?php endif; ?>
 
-        <a href="/HIT326_Group5_News_Site/Group326/logout.php">Logout</a>
+        <a href="../Views/logout.php">Logout</a>
     <?php else: ?>
-        <a href="/HIT326_Group5_News_Site/Group326/login.php">Login</a>
+        <a href="../Views/login.php">Login</a>
+    
+        <a href="../Views/homescreen.php">Home</a>
     <?php endif; ?>
 </header>
 <hr>
