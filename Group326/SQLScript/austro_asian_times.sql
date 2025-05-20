@@ -7,6 +7,14 @@
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
+-- Create the database if it doesn't exist
+CREATE DATABASE IF NOT EXISTS austro_asian_times
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_general_ci;
+
+-- Use the newly created (or existing) database
+USE austro_asian_times;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";

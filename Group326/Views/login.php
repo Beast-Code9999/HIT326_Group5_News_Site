@@ -1,9 +1,6 @@
 <?php
-require_once '../../CSS/header.php'; // Adjust path based on file structure
+require_once '../CSS/header.php'; // Adjust path based on file structure
 require '../Database/db_connection.php';
-
-
-session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -47,4 +44,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 </body>
 </html>
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../CSS/footer.php'; ?>
