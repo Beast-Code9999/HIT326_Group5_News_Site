@@ -26,11 +26,9 @@ if (session_status() === PHP_SESSION_NONE) {
             <a href="/HIT326_Group5_News_Site/Group326/Views/homescreen.php">Home</a> |
         <?php endif; ?>
 
-        <a href="../Views/logout.php">Logout</a>
+        <a href="/HIT326_Group5_News_Site/Group326/logout.php">Logout</a>
     <?php else: ?>
-        <a href="../Views/login.php">Login</a>
-    
-        <a href="../Views/homescreen.php">Home</a>
+        <a href="/HIT326_Group5_News_Site/Group326/login.php">Login</a>
     <?php endif; ?>
 </header>
 <hr>
