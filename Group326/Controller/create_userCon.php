@@ -1,7 +1,6 @@
 <?php
-require_once '../../CSS/header.php'; // Adjust path based on file structure
+require_once '../CSS/header.php'; // Adjust path based on file structure
 require_once '../Database/db_connection.php';
-session_start();
 
 // Allow only Admins to create users
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 10) {
@@ -40,4 +39,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Invalid request.";
 }
 ?>
-<?php require_once '../../CSS/footer.php'; ?>
+<?php require_once '../CSS/footer.php'; ?>

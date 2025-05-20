@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../Database/db_connection.php'; // Assumes $pdo is defined in this file
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
