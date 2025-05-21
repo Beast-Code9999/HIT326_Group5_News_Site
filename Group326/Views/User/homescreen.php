@@ -3,7 +3,6 @@ require '../../Controller/authenticate.php';
 require '../../Database/db_connection.php';
 require_once '../HeaderFooter/header.php';
 
-// Check if the user has author/editor privileges
 $canPost = false;
 if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [1, 2])) {
     $canPost = true;
@@ -15,14 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canPost) {
     $user_id = $_SESSION['user']['id'];
     $allow_comments = isset($_POST['allow_comments']) ? 1 : 0;
 
-    // Handle image upload (store as BLOB in DB)
     $imageData = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $imageTmp = $_FILES['image']['tmp_name'];
         $imageData = file_get_contents($imageTmp);
     }
 
-    // Insert article into DB
     $stmt = $pdo->prepare("
         INSERT INTO articles 
         (title, content, author_id, allow_comments, image_data, created_at, is_published)
@@ -38,11 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canPost) {
     $message = "Article submitted successfully! Awaiting editor approval.";
 }
 
-// Fetch 5 most recent articles with author info
+// Only fetch published articles
 $stmt = $pdo->query("
-    SELECT a.title, a.content, a.image_data, a.created_at, u.username 
+    SELECT a.id, a.title, a.content, a.image_data, a.created_at, u.username 
     FROM articles a
     JOIN users u ON a.author_id = u.id
+    WHERE a.is_published = 1
     ORDER BY a.created_at DESC
     LIMIT 5
 ");
@@ -68,13 +66,18 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php foreach ($recentArticles as $article): ?>
     <div class="article-preview">
-        <h3><?= htmlspecialchars($article['title']) ?></h3>
+        <?php
+        $link = ($_SESSION['user']['role_id'] ?? 0) == 2
+            ? "editarticle.php?id=" . $article['id']
+            : "articledetails.php?id=" . $article['id'];
+        ?>
+        <h3><a href="<?= $link ?>"><?= htmlspecialchars($article['title']) ?></a></h3>
         <p><strong>By:</strong> <?= htmlspecialchars($article['username']) ?> | <small><?= $article['created_at'] ?></small></p>
-        
+
         <?php if (!empty($article['image_data'])): ?>
             <img src="data:image/jpeg;base64,<?= base64_encode($article['image_data']) ?>" alt="Article Image">
         <?php endif; ?>
-        
+
         <p><?= htmlspecialchars(substr($article['content'], 0, 200)) ?>...</p>
     </div>
 <?php endforeach; ?>
@@ -102,8 +105,6 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php else: ?>
     <p><em>Login as an Author or Editor to post a new article.</em></p>
 <?php endif; ?>
-
-<a href="homescreen.php">← Back to Home</a>
 
 </body>
 </html>
