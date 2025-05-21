@@ -1,5 +1,7 @@
 <?php
-require_once '../Views/HeaderFooter/header.php'; // Adjust path based on file structure
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); // Ensure the session is started
+}
 require_once '../Database/db_connection.php';
 
 // Allow only Admins to create users
@@ -27,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Username or email already exists.");
         }
 
+        // TODO: Replace plain password with hashed version using password_hash()
         // Insert new user
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password), role_id) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, ?)");
         $stmt->execute([$username, $email, $password, $role_id]);
 
         echo "User created successfully. <a href='../Views/Admin/user_list.php'>Back to user list</a>";
