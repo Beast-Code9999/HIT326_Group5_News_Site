@@ -66,11 +66,7 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php foreach ($recentArticles as $article): ?>
     <div class="article-preview">
-        <?php
-        $link = ($_SESSION['user']['role_id'] ?? 0) == 2
-            ? "editarticle.php?id=" . $article['id']
-            : "articledetails.php?id=" . $article['id'];
-        ?>
+        <?php $link = "articledetails.php?id=" . $article['id']; ?>
         <h3><a href="<?= $link ?>"><?= htmlspecialchars($article['title']) ?></a></h3>
         <p><strong>By:</strong> <?= htmlspecialchars($article['username']) ?> | <small><?= $article['created_at'] ?></small></p>
 
