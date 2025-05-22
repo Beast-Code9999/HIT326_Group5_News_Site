@@ -61,6 +61,11 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+    
+<?php
+if ($_SESSION['user']['role_id'] == 2): ?>
+    <p><a href="reviewarticles.php">Review Pending Articles</a></p>
+<?php endif; ?>
 
 <h1>Recent Articles</h1>
 
