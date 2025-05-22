@@ -6,23 +6,28 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
     die("Unauthorized access.");
 }
 
-if (!isset($_GET['id'])) {
+$article_id = $_GET['id'] ?? null;
+if (!$article_id) {
     die("Article ID not provided.");
 }
 
-$article_id = $_GET['id'];
+// Handle comment deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment_id'])) {
+    $comment_id = $_POST['delete_comment_id'];
+    $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ?");
+    $stmt->execute([$comment_id]);
+}
 
 // Fetch article
 $stmt = $pdo->prepare("SELECT * FROM articles WHERE id = ?");
 $stmt->execute([$article_id]);
 $article = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$article) {
     die("Article not found.");
 }
 
 // Handle update
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_comment_id'])) {
     $title = $_POST['title'];
     $content = $_POST['content'];
     $allow_comments = isset($_POST['allow_comments']) ? 1 : 0;
@@ -45,6 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$article_id]);
     $article = $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+// Fetch comments for the article
+$commentsStmt = $pdo->prepare("
+    SELECT c.id, c.content, c.created_at, u.username 
+    FROM comments c 
+    JOIN users u ON c.user_id = u.id 
+    WHERE c.article_id = ? 
+    ORDER BY c.created_at DESC
+");
+$commentsStmt->execute([$article_id]);
+$comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +88,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <input type="submit" value="Update Article">
     </form>
+
+    <h3>Comments</h3>
+    <?php if (count($comments) > 0): ?>
+        <ul>
+            <?php foreach ($comments as $comment): ?>
+                <li>
+                    <strong><?= htmlspecialchars($comment['username']) ?></strong> (<?= $comment['created_at'] ?>):<br>
+                    <?= nl2br(htmlspecialchars($comment['content'])) ?><br>
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="delete_comment_id" value="<?= $comment['id'] ?>">
+                        <button type="submit" onclick="return confirm('Delete this comment?')">Delete</button>
+                    </form>
+                </li><br>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p>No comments yet.</p>
+    <?php endif; ?>
 
     <p><a href="homescreen.php">← Back to Home</a></p>
 </body>
