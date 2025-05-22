@@ -3,16 +3,16 @@ require_once '../HeaderFooter/header.php'; // Adjust path based on file structur
 require '../../Database/db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && $password === $user['password']) {
+    if ($user && $password === $user['password']) { // Note: Plaintext comparison (no hashing)
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['username'] = $user['username']; // Optional: keep username if you still use it elsewhere
         $_SESSION['role_id'] = $user['role_id'];
         $_SESSION['user'] = $user;
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h2>Login</h2>
 <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
 <form method="post">
-    Username: <input type="text" name="username" required><br>
+    Email: <input type="email" name="email" required><br>
     Password: <input type="password" name="password" required><br>
     <input type="submit" value="Login">
 </form>

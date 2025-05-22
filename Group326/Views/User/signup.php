@@ -6,12 +6,15 @@ $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
     $role_id = 3; // Regular user
 
     // Basic validation
-    if (empty($username) || empty($password)) {
-        $errors[] = "Username and password are required.";
+    if (empty($username) || empty($email) || empty($password)) {
+        $errors[] = "Username, email, and password are required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
     }
 
     // Check for existing username
@@ -21,10 +24,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Username already exists.";
     }
 
+    // Check for existing email
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        $errors[] = "Email already in use.";
+    }
+
     if (empty($errors)) {
         // Insert new user
-        $stmt = $pdo->prepare("INSERT INTO users (username, password, role_id) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $password, $role_id]);
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$username, $email, $password, $role_id]);
 
         $success = "Account created successfully. <a href='login.php'>Log in here</a>.";
     }
@@ -53,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post">
             <label>Username:</label><br>
             <input type="text" name="username" required><br><br>
+
+            <label>Email:</label><br>
+            <input type="email" name="email" required><br><br>
 
             <label>Password:</label><br>
             <input type="password" name="password" required><br><br>
