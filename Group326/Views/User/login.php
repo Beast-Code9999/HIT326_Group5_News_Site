@@ -14,18 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role_id'] = $user['role_id'];
+        $_SESSION['user'] = $user;
 
-        // Redirect based on role
-        if ($user && $password === $user['password']) {
-            $_SESSION['user'] = $user;
-
-            if ($user['role_id'] == 10) {
-                header('Location: ../Admin/admin_home.php');
-            } else {
-                header('Location: ../User/homescreen.php');
-            }
-            exit;
-}
+        if ($user['role_id'] == 10) {
+            header('Location: ../Admin/admin_home.php');
+        } else {
+            header('Location: ../User/homescreen.php');
+        }
+        exit;
     } else {
         $error = "Invalid login credentials.";
     }
@@ -42,7 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Password: <input type="password" name="password" required><br>
     <input type="submit" value="Login">
 </form>
+
+<p>Don't have an account? <a href="signup.php">Sign Up</a></p>
+
 </body>
 </html>
 <?php require_once '../HeaderFooter/footer.php'; ?>
-
