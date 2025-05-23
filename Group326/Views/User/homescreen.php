@@ -3,11 +3,13 @@ require '../../Controller/authenticate.php';
 require '../../Database/db_connection.php';
 require_once '../HeaderFooter/header.php';
 
+// Allow posting if user is a journalist (1), editor (2), or admin (10)
 $canPost = false;
-if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [1, 2])) {
+if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [1, 2, 10])) {
     $canPost = true;
 }
 
+// Handle article submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canPost) {
     $title = $_POST['title'];
     $content = $_POST['content'];
@@ -35,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canPost) {
     $message = "Article submitted successfully! Awaiting editor approval.";
 }
 
-// Only fetch published articles
+// Fetch published articles
 $stmt = $pdo->query("
     SELECT a.id, a.title, a.content, a.image_data, a.created_at, u.username 
     FROM articles a
@@ -61,9 +63,10 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
-    
+
 <?php
-if ($_SESSION['user']['role_id'] == 2): ?>
+// Show review link if user is editor or admin
+if (in_array($_SESSION['user']['role_id'], [2, 10])): ?>
     <p><a href="reviewarticles.php">Review Pending Articles</a></p>
 <?php endif; ?>
 
@@ -104,7 +107,7 @@ if ($_SESSION['user']['role_id'] == 2): ?>
         <input type="submit" value="Submit Article">
     </form>
 <?php else: ?>
-    <p><em>Login as an Author or Editor to post a new article.</em></p>
+    <p><em>Login as an Author, Editor, or Admin to post a new article.</em></p>
 <?php endif; ?>
 
 </body>

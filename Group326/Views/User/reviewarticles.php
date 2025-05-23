@@ -3,8 +3,8 @@ require '../../Controller/authenticate.php';
 require '../../Database/db_connection.php';
 require_once '../HeaderFooter/header.php';
 
-// Allow only Editors
-if (!isset($_SESSION['user']) || $_SESSION['user']['role_id'] != 2) {
+// Allow Editors (2) and Admins (10)
+if (!isset($_SESSION['user']) || !in_array($_SESSION['user']['role_id'], [2, 10])) {
     echo "<p>You do not have permission to access this page.</p>";
     exit;
 }
@@ -20,6 +20,20 @@ $stmt = $pdo->query("
 $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Articles</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background-color: #f4f4f4; }
+        .article-preview { background: #fff; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        a { color: #007BFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
 <h1>Articles Awaiting Approval</h1>
 
 <?php if (empty($articles)): ?>
@@ -33,5 +47,8 @@ $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     <?php endforeach; ?>
 <?php endif; ?>
+
+</body>
+</html>
 
 <?php require_once '../HeaderFooter/footer.php'; ?>
