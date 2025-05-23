@@ -66,7 +66,7 @@ $recentArticles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 // Show review link if user is editor or admin
-if (in_array($_SESSION['user']['role_id'], [2, 10])): ?>
+if (isset($_SESSION['user']) && in_array($_SESSION['user']['role_id'], [2, 10])): ?>
     <p><a href="reviewarticles.php">Review Pending Articles</a></p>
 <?php endif; ?>
 
