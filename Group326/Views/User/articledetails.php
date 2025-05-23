@@ -12,9 +12,9 @@ $user = $_SESSION['user'] ?? null;
 $user_id = $user['id'] ?? null;
 $role_id = $user['role_id'] ?? null;
 
-$is_admin = ($role_id == 10);     // Admin
-$is_editor = ($role_id == 2);     // Editor
-$can_manage_article = $is_admin || $is_editor; // Editors have full admin-level access to articles
+$is_admin = ($role_id == 10);
+$is_editor = ($role_id == 2);
+$can_manage_article = $is_admin || $is_editor;
 
 // Handle comment deletion
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment_id']) && $user_id) {
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment_content']) &&
     }
 }
 
-// Handle article update (admin or editor)
+// Handle article update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_article']) && $can_manage_article) {
     $title = $_POST['title'];
     $content = $_POST['content'];
@@ -46,12 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_article']) && 
     $is_published = isset($_POST['is_published']) ? 1 : 0;
 
     $stmt = $pdo->prepare("
-        UPDATE articles SET 
-            title = ?, content = ?, allow_comments = ?, is_published = ?, updated_at = NOW() 
+        UPDATE articles 
+        SET title = ?, content = ?, allow_comments = ?, is_published = ?, updated_at = NOW() 
         WHERE id = ?
     ");
     $stmt->execute([$title, $content, $allow_comments, $is_published, $article_id]);
     $success = "Article updated successfully.";
+}
+
+// Handle article deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_article']) && $can_manage_article) {
+    $stmt = $pdo->prepare("DELETE FROM articles WHERE id = ?");
+    $stmt->execute([$article_id]);
+    header("Location: reviewarticles.php");
+    exit;
 }
 
 // Fetch article
@@ -119,6 +127,12 @@ $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
         <input type="submit" name="update_article" value="Update Article">
     </form>
+
+    <!-- Plain delete article button -->
+    <form method="post" onsubmit="return confirm('Are you sure you want to delete this article?');">
+        <input type="hidden" name="delete_article" value="1">
+        <button type="submit">Delete Article</button>
+    </form>
 <?php endif; ?>
 
 <?php if ($article['allow_comments']): ?>
@@ -126,7 +140,6 @@ $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
     <h3>Comments</h3>
 
     <?php if ($user_id): ?>
-        <!-- Comment form -->
         <form method="post">
             <textarea name="comment_content" rows="4" cols="60" placeholder="Write your comment here..." required></textarea><br>
             <button type="submit">Post Comment</button>
